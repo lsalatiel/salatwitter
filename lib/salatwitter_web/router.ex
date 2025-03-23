@@ -17,7 +17,10 @@ defmodule SalatwitterWeb.Router do
   scope "/", SalatwitterWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    get "/auth/login", AuthController, :login
+    get "/auth/logout", AuthController, :logout
+
+    live "/", AuthLive.Index, :index
 
     live "/posts", PostLive.Index, :index
     live "/posts/new", PostLive.Index, :new

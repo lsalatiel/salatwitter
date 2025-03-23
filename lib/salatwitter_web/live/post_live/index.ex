@@ -5,11 +5,22 @@ defmodule SalatwitterWeb.PostLive.Index do
   alias Salatwitter.Timeline.Post
   
   @impl true
-  def mount(_params, _session, socket) do
-    # Subscribe to the posts topic when mounting the LiveView
-    if connected?(socket), do: Phoenix.PubSub.subscribe(Salatwitter.PubSub, "posts")
+  def mount(_params, session, socket) do
+    # Get username from session
+    username = Map.get(session, "username")
     
-    {:ok, stream(socket, :posts, Timeline.list_posts())}
+    # Redirect to login if no username
+    if is_nil(username) do
+      {:ok, redirect(socket, to: ~p"/")}
+    else
+      # Subscribe to the posts topic
+      if connected?(socket), do: Phoenix.PubSub.subscribe(Salatwitter.PubSub, "posts")
+      
+      {:ok, 
+       socket
+       |> assign(:current_username, username)
+       |> stream(:posts, Timeline.list_posts())}
+    end
   end
   
   @impl true
@@ -26,7 +37,7 @@ defmodule SalatwitterWeb.PostLive.Index do
   defp apply_action(socket, :new, _params) do
     socket
     |> assign(:page_title, "New Post")
-    |> assign(:post, %Post{})
+    |> assign(:post, %Post{username: socket.assigns.current_username})
   end
   
   defp apply_action(socket, :index, _params) do

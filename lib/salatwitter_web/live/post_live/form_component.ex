@@ -61,12 +61,8 @@ defmodule SalatwitterWeb.PostLive.FormComponent do
   end
   
   defp save_post(socket, :new, post_params) do
-    # Add username to post_params if it's not already set
-    if Map.has_key?(post_params, "username") && post_params["username"] != "" do
-      post_params
-    else
-      Map.put(post_params, "username", "user#{System.unique_integer([:positive])}")
-    end
+    # Always use the username from the current session
+    post_params = Map.put(post_params, "username", socket.assigns.post.username)
     
     case Timeline.create_post(post_params) do
       {:ok, post} ->

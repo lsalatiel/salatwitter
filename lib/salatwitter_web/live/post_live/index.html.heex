@@ -1,15 +1,21 @@
 <.header>
   Timeline
   <:actions>
-    <.link patch={~p"/posts/new"}>
-      <.button>New Post</.button>
-    </.link>
+    <div class="flex items-center space-x-4">
+      <span class="text-gray-600">Logged in as <span class="font-bold">@<%= @current_username %></span></span>
+      <.link href={~p"/auth/logout"} class="hover:underline text-red-500">
+        Logout
+      </.link>
+      <.link patch={~p"/posts/new"}>
+        <.button>New Post</.button>
+      </.link>
+    </div>
   </:actions>
 </.header>
 
 <div id="posts" phx-update="stream" class="space-y-4 py-4">
   <%= for {id, post} <- @streams.posts do %>
-    <div id={id} class="bg-white border rounded-lg shadow-sm overflow-hidden">
+    <div id={id} class={"bg-white border rounded-lg shadow-sm overflow-hidden #{if post.username == @current_username, do: "border-blue-500 border-2", else: ""}"}>
       <div class="p-4">
         <div class="flex items-start">
           <!-- Avatar placeholder -->
