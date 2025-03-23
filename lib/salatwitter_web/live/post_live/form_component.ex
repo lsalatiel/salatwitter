@@ -2,7 +2,7 @@ defmodule SalatwitterWeb.PostLive.FormComponent do
   use SalatwitterWeb, :live_component
 
   alias Salatwitter.Timeline
-
+  
   @impl true
   def render(assigns) do
     ~H"""
@@ -11,7 +11,6 @@ defmodule SalatwitterWeb.PostLive.FormComponent do
         {@title}
         <:subtitle>Use this form to manage post records in your database.</:subtitle>
       </.header>
-
       <.simple_form
         for={@form}
         id="post-form"
@@ -19,10 +18,7 @@ defmodule SalatwitterWeb.PostLive.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={@form[:username]} type="text" label="Username" />
-        <.input field={@form[:body]} type="text" label="Body" />
-        <.input field={@form[:likes_count]} type="number" label="Likes count" />
-        <.input field={@form[:reposts_count]} type="number" label="Reposts count" />
+        <.input field={@form[:body]} type="textarea" label="Body" />
         <:actions>
           <.button phx-disable-with="Saving...">Save Post</.button>
         </:actions>
@@ -30,7 +26,7 @@ defmodule SalatwitterWeb.PostLive.FormComponent do
     </div>
     """
   end
-
+  
   @impl true
   def update(%{post: post} = assigns, socket) do
     {:ok,
@@ -40,46 +36,45 @@ defmodule SalatwitterWeb.PostLive.FormComponent do
        to_form(Timeline.change_post(post))
      end)}
   end
-
+  
   @impl true
   def handle_event("validate", %{"post" => post_params}, socket) do
     changeset = Timeline.change_post(socket.assigns.post, post_params)
     {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
   end
-
+  
   def handle_event("save", %{"post" => post_params}, socket) do
     save_post(socket, socket.assigns.action, post_params)
   end
-
+  
   defp save_post(socket, :edit, post_params) do
     case Timeline.update_post(socket.assigns.post, post_params) do
       {:ok, post} ->
         notify_parent({:saved, post})
-
         {:noreply,
          socket
          |> put_flash(:info, "Post updated successfully")
          |> push_patch(to: socket.assigns.patch)}
-
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
     end
   end
-
+  
   defp save_post(socket, :new, post_params) do
+    # Add username to post_params if it's not already set
+    post_params = Map.put_new(post_params, "username", "user#{:rand.uniform(1000)}")
+    
     case Timeline.create_post(post_params) do
       {:ok, post} ->
         notify_parent({:saved, post})
-
         {:noreply,
          socket
          |> put_flash(:info, "Post created successfully")
          |> push_patch(to: socket.assigns.patch)}
-
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
     end
   end
-
+  
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})
 end
