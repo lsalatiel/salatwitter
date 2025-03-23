@@ -63,4 +63,32 @@ defmodule SalatwitterWeb.PostLive.Index do
     
     {:noreply, stream_delete(socket, :posts, post)}
   end
+
+  @impl true
+  def handle_event("like", %{"id" => id}, socket) do
+    post = Timeline.get_post!(id)
+    
+    # Update the post with incremented likes_count
+    updated_post = %{post | likes_count: post.likes_count + 1}
+    {:ok, updated_post} = Timeline.update_post(post, %{likes_count: updated_post.likes_count})
+    
+    # Broadcast the update to all clients
+    Phoenix.PubSub.broadcast(Salatwitter.PubSub, "posts", {:post_updated, updated_post})
+    
+    {:noreply, stream_insert(socket, :posts, updated_post)}
+  end
+  
+  @impl true
+  def handle_event("repost", %{"id" => id}, socket) do
+    post = Timeline.get_post!(id)
+    
+    # Update the post with incremented reposts_count
+    updated_post = %{post | reposts_count: post.reposts_count + 1}
+    {:ok, updated_post} = Timeline.update_post(post, %{reposts_count: updated_post.reposts_count})
+    
+    # Broadcast the update to all clients
+    Phoenix.PubSub.broadcast(Salatwitter.PubSub, "posts", {:post_updated, updated_post})
+    
+    {:noreply, stream_insert(socket, :posts, updated_post)}
+  end
 end

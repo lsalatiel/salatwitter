@@ -101,4 +101,12 @@ defmodule Salatwitter.Timeline do
   def change_post(%Post{} = post, attrs \\ %{}) do
     Post.changeset(post, attrs)
   end
+  
+  def increment_likes(%Post{} = post) do
+    update_post(post, %{likes_count: post.likes_count + 1})
+  end
+
+  def increment_reposts(%Post{} = post) do
+    update_post(post, %{reposts_count: post.reposts_count + 1})
+  end
 end

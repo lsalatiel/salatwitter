@@ -30,7 +30,12 @@
             <!-- Post actions (like, repost, etc.) -->
             <div class="flex items-center text-gray-500 text-sm space-x-6">
               <div class="flex items-center">
-                <button class="hover:text-blue-500 focus:outline-none" aria-label="Like">
+                <button 
+                  phx-click="like"
+                  phx-value-id={post.id}
+                  class="hover:text-blue-500 focus:outline-none" 
+                  aria-label="Like"
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1">
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                   </svg>
@@ -39,7 +44,12 @@
               </div>
               
               <div class="flex items-center">
-                <button class="hover:text-green-500 focus:outline-none" aria-label="Repost">
+                <button 
+                  phx-click="repost"
+                  phx-value-id={post.id}
+                  class="hover:text-green-500 focus:outline-none" 
+                  aria-label="Repost"
+                >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1">
                     <polyline points="17 1 21 5 17 9"></polyline>
                     <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
@@ -51,6 +61,9 @@
               </div>
               
               <div class="flex items-center ml-auto">
+                <.link navigate={~p"/posts/#{post}"} class="text-blue-500 hover:underline mr-3">
+                  Show
+                </.link>
                 <.link patch={~p"/posts/#{post}/edit"} class="text-blue-500 hover:underline mr-3">
                   Edit
                 </.link>
