@@ -30,19 +30,19 @@ defmodule SalatwitterWeb.PostLive.Index do
   
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
-    |> assign(:page_title, "Edit Post")
+    |> assign(:page_title, "Edit Post / Salatwitter")
     |> assign(:post, Timeline.get_post!(id))
   end
   
   defp apply_action(socket, :new, _params) do
     socket
-    |> assign(:page_title, "New Post")
+    |> assign(:page_title, "New Post / Salatwitter")
     |> assign(:post, %Post{username: socket.assigns.current_username})
   end
   
   defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:page_title, "Listing Posts")
+    |> assign(:page_title, "Timeline / Salatwitter")
     |> assign(:post, nil)
   end
   
