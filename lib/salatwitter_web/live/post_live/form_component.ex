@@ -9,7 +9,6 @@ defmodule SalatwitterWeb.PostLive.FormComponent do
     <div>
       <.header>
         {@title}
-        <:subtitle>Use this form to manage post records in your database.</:subtitle>
       </.header>
       <.simple_form
         for={@form}
@@ -18,7 +17,7 @@ defmodule SalatwitterWeb.PostLive.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={@form[:body]} type="textarea" label="Body" />
+        <.input field={@form[:body]} type="textarea" label="Content" />
         <:actions>
           <.button phx-disable-with="Saving...">Save Post</.button>
         </:actions>

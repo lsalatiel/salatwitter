@@ -6,20 +6,28 @@
       <.link href={~p"/auth/logout"} class="hover:underline text-red-500">
         Logout
       </.link>
-      <.link patch={~p"/posts/new"}>
-        <.button>New Post</.button>
-      </.link>
     </div>
   </:actions>
 </.header>
+
+<div class="my-4">
+  <.link patch={~p"/posts/new"}>
+    <.button>New Post</.button>
+  </.link>
+</div>
 
 <div id="posts" phx-update="stream" class="space-y-4 py-4">
   <%= for {id, post} <- @streams.posts do %>
     <div id={id} class={"bg-white border rounded-lg shadow-sm overflow-hidden #{if post.username == @current_username, do: "border-blue-500 border-2", else: ""}"}>
       <div class="p-4">
         <div class="flex items-start">
-          <!-- Avatar placeholder -->
-          <div class="w-12 h-12 bg-gray-200 rounded-full mr-3 flex-shrink-0"></div>
+          <!-- Avatar -->
+          <!-- https://github.com/vercel/avatar?tab=readme-ov-file -->
+          <img 
+            src={"https://avatar.vercel.sh/#{post.username}.svg?text=#{String.downcase(String.slice(post.username, 0, 2))}"} 
+            alt={"Avatar for @#{post.username}"}
+            class="w-12 h-12 rounded-full mr-3 flex-shrink-0"
+          />
           
           <div class="flex-grow">
             <!-- Post header with username -->
@@ -70,10 +78,13 @@
                 <.link navigate={~p"/posts/#{post}"} class="text-blue-500 hover:underline mr-3">
                   Show
                 </.link>
-                <.link patch={~p"/posts/#{post}/edit"} class="text-blue-500 hover:underline mr-3">
+                <.link patch={~p"/posts/#{post}/edit"} class="text-blue-500 hover:underline mr-3"
+                  :if={post.username == @current_username || @current_username == "admin"}
+                >
                   Edit
                 </.link>
                 <.link
+                  :if={post.username == @current_username || @current_username == "admin"}
                   phx-click={JS.push("delete", value: %{id: post.id}) |> hide("##{id}")}
                   data-confirm="Are you sure?"
                   class="text-red-500 hover:underline"
